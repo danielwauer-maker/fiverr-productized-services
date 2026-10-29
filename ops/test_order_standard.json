@@ -1,0 +1,22 @@
+{
+  "order_id": "ORDER-STD-001",
+  "package": "standard",
+  "project_path": "demo_generated/PowerBI_Audit_Demo",
+  "business_goal": "Executive sales reporting for management with reliable KPIs and a maintainable Power BI model.",
+  "primary_concern": "Overall health review with emphasis on model quality, DAX and report performance.",
+  "known_problems": "The report feels dense and the model has accumulated relationship and DAX complexity.",
+  "scope_confirmed": true,
+  "sensitive_data_confirmed": true,
+  "confirmed_findings": [
+    {"rule_id": "REL-001", "status": "confirmed"},
+    {"rule_id": "REL-002", "status": "confirmed"},
+    {"rule_id": "DMA-003", "status": "confirmed"},
+    {"rule_id": "DMA-004", "status": "confirmed"},
+    {"rule_id": "DAX-003", "status": "confirmed"},
+    {"rule_id": "DAX-004", "status": "confirmed"},
+    {"rule_id": "DAX-005", "status": "confirmed"},
+    {"rule_id": "DAX-007", "status": "confirmed"},
+    {"rule_id": "PERF-001", "status": "confirmed"},
+    {"rule_id": "GOV-003", "status": "confirmed"}
+  ]
+}
