@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Power BI Health Assessment Order Intake",
+  "type": "object",
+  "required": ["order_id", "package", "project_path", "business_goal", "primary_concern", "scope_confirmed", "sensitive_data_confirmed"],
+  "properties": {
+    "order_id": {"type": "string", "minLength": 3},
+    "package": {"enum": ["basic", "standard", "premium"]},
+    "project_path": {"type": "string", "minLength": 1},
+    "business_goal": {"type": "string", "minLength": 10},
+    "primary_concern": {"type": "string", "minLength": 3},
+    "known_problems": {"type": "string"},
+    "scope_confirmed": {"type": "boolean", "const": true},
+    "sensitive_data_confirmed": {"type": "boolean", "const": true},
+    "confirmed_findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["rule_id", "status"],
+        "properties": {
+          "rule_id": {"type": "string"},
+          "status": {"enum": ["confirmed", "rejected"]},
+          "severity": {"enum": ["low", "medium", "high", "critical"]},
+          "impact": {"enum": ["low", "medium", "high"]},
+          "effort": {"enum": ["low", "medium", "high"]},
+          "notes": {"type": "string"}
+        }
+      }
+    }
+  }
+}
