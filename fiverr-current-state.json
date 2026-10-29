@@ -1,0 +1,60 @@
+{
+  "project": "Fiverr Premium Seller / Productized Expert Services",
+  "owner": "Daniel Wauer",
+  "status_date": "2026-10-29",
+  "phase": "Release Candidate / Manual Fiverr Launch Gate",
+  "current_sprint": {
+    "id": "10",
+    "name": "Fiverr Launch",
+    "status": "manual_gate",
+    "completion_percent": 0
+  },
+  "hero_gig": {
+    "title": "I will professionally audit your Power BI report, DAX and data model",
+    "product_name": "Power BI Health Assessment",
+    "usp": "A professional Power BI health assessment combining technical quality, performance, dashboard UX and business value.",
+    "packages": {
+      "basic": {"name": "Quick Diagnostic", "price_usd": 79, "delivery_days": 2},
+      "standard": {"name": "Professional Audit", "price_usd": 149, "delivery_days": 3},
+      "premium": {"name": "Optimization Blueprint", "price_usd": 249, "delivery_days": 4}
+    },
+    "category_recommendation": "Data > Data Visualization > Reports",
+    "search_tags": ["power bi", "dax", "data modeling", "power bi audit", "power bi optimization"],
+    "copy_status": "frozen_v1"
+  },
+  "assessment_engine": {"version": "1.0.0", "rules": 58, "status": "done"},
+  "analyzer": {"version": "1.0.0", "source_format": "PBIP/PBIR/TMDL", "status": "done"},
+  "report": {
+    "standard_pages": 12,
+    "demo_pdf": "report/Power_BI_Health_Assessment_Demo.pdf",
+    "visual_qa": "passed",
+    "before_score": 78,
+    "after_score": 98,
+    "improvement_points": 20
+  },
+  "brand": {"final_name": null, "status": "postponed"},
+  "profile": {
+    "display_name": "Daniel Wauer",
+    "professional_title": "Power BI & Business Systems Specialist",
+    "copy_status": "frozen_v1",
+    "completed_certifications": ["Microsoft Certified: Azure Fundamentals (AZ-900)"]
+  },
+  "sprint_status": {
+    "01": {"completion_percent": 95, "status": "manual_live_metadata_check_pending"},
+    "02": {"completion_percent": 100, "status": "done"},
+    "03": {"completion_percent": 100, "status": "done"},
+    "04": {"completion_percent": 100, "status": "done"},
+    "05": {"completion_percent": 100, "status": "copy_done_manual_account_entry_pending"},
+    "06": {"completion_percent": 90, "status": "graphics_done_manual_video_recording_pending"},
+    "07": {"completion_percent": 100, "status": "done"},
+    "08": {"completion_percent": 100, "status": "done"},
+    "09": {"completion_percent": 100, "status": "automated_qa_pass"},
+    "10": {"completion_percent": 0, "status": "blocked_on_manual_fiverr_launch"}
+  },
+  "release_candidate": {
+    "automated_qa": "pass",
+    "tests": "4/4 pass",
+    "internal_order": "ORDER-STD-001 pass",
+    "manual_checklist": "docs/MANUAL_LAUNCH_CHECKLIST.md"
+  }
+}
