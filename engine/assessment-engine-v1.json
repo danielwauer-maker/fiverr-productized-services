@@ -1,0 +1,59 @@
+{
+  "engine_version": "1.0.0",
+  "status": "frozen_v1",
+  "created": "2026-10-29",
+  "purpose": "Power BI Health Assessment scoring and finding framework for productized Fiverr audit.",
+  "score": {
+    "total": 100,
+    "category_weights": {
+      "data_model_architecture": 20,
+      "relationships": 10,
+      "dax_quality": 15,
+      "power_query_transformation": 10,
+      "performance": 15,
+      "dashboard_ux_visual_design": 10,
+      "business_kpi_alignment": 10,
+      "maintainability_governance": 10
+    },
+    "category_formula": "category_score = max(0, category_weight - sum(applicable finding deductions))",
+    "overall_formula": "sum(category_scores)",
+    "bands": [
+      {"min": 90, "max": 100, "label": "Excellent"},
+      {"min": 80, "max": 89, "label": "Strong"},
+      {"min": 70, "max": 79, "label": "Good"},
+      {"min": 60, "max": 69, "label": "Needs Improvement"},
+      {"min": 40, "max": 59, "label": "High Optimization Potential"},
+      {"min": 0, "max": 39, "label": "Critical"}
+    ],
+    "guardrails": [
+      "Only applicable, evidence-backed findings affect the score.",
+      "Category scores cannot fall below zero.",
+      "Manual/hybrid rules require expert validation before delivery.",
+      "A rule may be suppressed when the documented exception applies.",
+      "Business KPI and governance conclusions must not be inferred from technical metadata alone when customer context is required."
+    ]
+  },
+  "classification": {
+    "numeric_maps": {
+      "severity": {"low": 1, "medium": 2, "high": 3, "critical": 4},
+      "business_impact": {"low": 1, "medium": 2, "high": 3},
+      "effort": {"low": 1, "medium": 2, "high": 3}
+    },
+    "priority_formula": "priority_score = severity*2 + business_impact*2 + effort_bonus; effort_bonus = 2 low, 1 medium, 0 high",
+    "priority_rules": [
+      "Critical severity => P1 regardless of numeric score.",
+      "priority_score >= 10 => P1",
+      "priority_score 7-9 => P2",
+      "priority_score 5-6 => P3",
+      "priority_score <= 4 => P4"
+    ],
+    "quick_win_definition": "Business impact medium/high AND effort low AND severity not low."
+  },
+  "detection_modes": {
+    "automatic": "Can be detected from model/report metadata or parser output, but may still need sanity review.",
+    "hybrid": "Machine can flag evidence; expert must confirm context before delivery.",
+    "manual": "Requires expert/customer-context review."
+  },
+  "rules_path": "rules/*.json",
+  "rules_count": 58
+}
