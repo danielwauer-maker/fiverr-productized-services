@@ -8,7 +8,10 @@ import argparse, json, re
 
 HERE=Path(__file__).resolve().parent
 ENGINE=json.loads((HERE/'assessment-engine-v1.json').read_text(encoding='utf-8'))
-RULES={r['id']:r for r in ENGINE['rules']}
+ALL_RULES=[]
+for rule_file in sorted((HERE/'rules').glob('*.json')):
+    ALL_RULES.extend(json.loads(rule_file.read_text(encoding='utf-8')))
+RULES={r['id']:r for r in ALL_RULES}
 
 TABLE_RE=re.compile(r'^\s*table\s+[\'\"]?([^\'\"\n]+?)[\'\"]?\s*$',re.M)
 MEASURE_RE=re.compile(r'^\s*measure\s+[\'\"]?([^=\'\"\n]+?)[\'\"]?\s*=\s*(.+)$',re.M)
