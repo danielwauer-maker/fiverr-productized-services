@@ -2,12 +2,12 @@
   "project": "Fiverr Premium Seller / Productized Expert Services",
   "owner": "Daniel Wauer",
   "status_date": "2026-10-30",
-  "phase": "Release Candidate / Manual Fiverr Launch + Delivery Automation",
+  "phase": "Go-Live Ready / Manual Fiverr Publish Gate",
   "current_sprint": {
     "id": "10",
     "name": "Fiverr Launch",
     "status": "manual_gate",
-    "completion_percent": 70
+    "completion_percent": 80
   },
   "hero_gig": {
     "title": "I will audit and optimize your Power BI report, DAX and data model",
@@ -23,20 +23,22 @@
     "copy_status": "live_setup_v2"
   },
   "assessment_engine": {"version": "1.0.0", "rules": 58, "status": "done"},
-  "analyzer": {"version": "1.0.0", "source_format": "PBIP/PBIR/TMDL", "status": "go_live_hardening"},
+  "analyzer": {"version": "1.0.0", "source_format": "PBIP/PBIR/TMDL", "status": "go_live_ready"},
   "delivery_automation": {
-    "status": "feature_branch_qa_pending",
-    "branch": "feature/go-live-delivery-pipeline",
+    "status": "merged_qa_pass",
     "entrypoint": "engine/run_delivery.py",
     "outputs": ["processed_assessment.json", "review_required.json", "package PDF", "fiverr_delivery_message.txt", "optimization_offer.md", "delivery_manifest.json"],
-    "guardrail": "Only automatic rules may be auto-confirmed; hybrid/manual findings require expert confirmation."
+    "guardrail": "Only explicitly enabled automatic rules may be auto-confirmed; hybrid/manual findings require expert confirmation; repeated evidence hits score once per rule.",
+    "qa_run": 6,
+    "qa_tests": "8/8 pass"
   },
   "report": {
     "package_specific": true,
     "basic_target_pages": "3-4",
     "standard_target_pages": "8-12",
     "premium_target_pages": "12-18",
-    "visual_qa": "pending_for_new_generator",
+    "pdf_generator": "reportlab",
+    "visual_qa": "generator_smoke_test_passed",
     "before_score": 78,
     "after_score": 98,
     "improvement_points": 20
@@ -58,11 +60,13 @@
     "07": {"completion_percent": 100, "status": "done"},
     "08": {"completion_percent": 100, "status": "done"},
     "09": {"completion_percent": 100, "status": "automated_qa_pass"},
-    "10": {"completion_percent": 70, "status": "gig_creation_and_identity_publish_steps_pending"}
+    "10": {"completion_percent": 80, "status": "gig_requirements_gallery_identity_publish_steps_pending"}
   },
   "release_candidate": {
-    "automated_qa": "revalidation_pending_after_delivery_pipeline_changes",
-    "internal_order": "ORDER-STD-001 previous pass",
+    "automated_qa": "pass",
+    "tests": "8/8 pass",
+    "delivery_pipeline": "merged to main",
+    "internal_order": "ORDER-STD-001 reproduces 78/100",
     "manual_checklist": "docs/MANUAL_LAUNCH_CHECKLIST.md"
   }
 }
