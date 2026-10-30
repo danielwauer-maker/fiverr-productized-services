@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 """Operational wrapper for a Power BI Health Assessment order.
 
-Validates minimum intake, runs Analyzer V1, then evaluates only explicitly
-confirmed findings supplied in the order JSON. It never auto-confirms
-hybrid/manual findings.
+Validates intake, runs Analyzer V1 and produces a conservative assessment.
+Automatic rules may be confirmed automatically when explicitly enabled.
+Hybrid/manual rules always remain in the expert review queue unless confirmed.
+A rule can have multiple evidence hits, but it affects scoring at most once.
 """
 from pathlib import Path
 import argparse, json, sys
@@ -36,19 +37,87 @@ def validate_order(order):
     return p
 
 
+def _explicit_decisions(order):
+    return {f["rule_id"]: f for f in order.get("confirmed_findings", [])}
+
+
+def _dedupe_candidates(candidates):
+    """Collapse repeated evidence hits so each assessment rule is scored once."""
+    grouped = {}
+    for item in candidates:
+        rid = item["rule_id"]
+        if rid not in grouped:
+            grouped[rid] = dict(item)
+            grouped[rid]["evidence_hits"] = [item.get("evidence")]
+        else:
+            grouped[rid]["evidence_hits"].append(item.get("evidence"))
+            if item.get("confidence") == "high":
+                grouped[rid]["confidence"] = "high"
+    return list(grouped.values())
+
+
+def _build_review(analysis, order):
+    decisions = _explicit_decisions(order)
+    confirmed = []
+    review_queue = []
+    rejected = []
+    seen = set()
+    auto_confirm = order.get("auto_confirm_automatic", False)
+
+    for candidate in _dedupe_candidates(analysis.get("candidate_findings", [])):
+        rule_id = candidate["rule_id"]
+        seen.add(rule_id)
+        decision = decisions.get(rule_id)
+        if decision:
+            status = decision.get("status")
+            merged = {**candidate, **decision}
+            if status == "confirmed":
+                confirmed.append(merged)
+            else:
+                rejected.append(merged)
+            continue
+
+        if auto_confirm and candidate.get("detection_mode") == "automatic":
+            confirmed.append({**candidate, "status": "confirmed", "confirmation_source": "automatic_rule"})
+        else:
+            review_queue.append({**candidate, "status": "review_required"})
+
+    # Explicit expert decisions can cover manual/hybrid findings that static analysis
+    # cannot emit as candidates. Preserve those decisions for scoring.
+    for rule_id, decision in decisions.items():
+        if rule_id in seen:
+            continue
+        if decision.get("status") == "confirmed":
+            confirmed.append(dict(decision))
+        else:
+            rejected.append(dict(decision))
+
+    return confirmed, review_queue, rejected
+
+
 def process(order):
     project_path = validate_order(order)
     analysis = analyze(project_path)
-    confirmed = [f for f in order.get("confirmed_findings", []) if f.get("status") == "confirmed"]
+    confirmed, review_queue, rejected = _build_review(analysis, order)
     assessment = evaluate(confirmed)
     return {
         "order_id": order["order_id"],
         "package": order["package"],
+        "customer_name": order.get("customer_name", "Client"),
+        "project_name": order.get("project_name") or analysis["summary"].get("project", "Power BI Project"),
         "business_goal": order["business_goal"],
         "primary_concern": order["primary_concern"],
+        "known_problems": order.get("known_problems", ""),
         "analysis": analysis,
         "assessment": assessment,
-        "guardrail": "Only explicitly confirmed findings affect the customer score."
+        "review": {
+            "confirmed_count": len(confirmed),
+            "review_required_count": len(review_queue),
+            "rejected_count": len(rejected),
+            "review_required": review_queue,
+            "rejected": rejected
+        },
+        "guardrail": "Automatic rules may be auto-confirmed only when explicitly enabled. Hybrid/manual findings require explicit expert confirmation before they affect the customer score. Each rule affects scoring at most once; repeated evidence hits are preserved for review."
     }
 
 

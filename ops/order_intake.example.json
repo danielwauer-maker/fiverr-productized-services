@@ -1,0 +1,14 @@
+{
+  "order_id": "ORDER-001",
+  "package": "standard",
+  "customer_name": "Client Name",
+  "project_name": "Sales Reporting",
+  "project_path": "/local/path/to/customer/project.pbip",
+  "business_goal": "Improve reporting reliability, maintainability and decision support.",
+  "primary_concern": "Model quality, DAX and report performance",
+  "known_problems": "Optional customer notes from Fiverr requirements.",
+  "auto_confirm_automatic": true,
+  "scope_confirmed": true,
+  "sensitive_data_confirmed": true,
+  "confirmed_findings": []
+}
