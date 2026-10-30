@@ -31,6 +31,16 @@ class DeliveryPipelineTests(unittest.TestCase):
         self.assertEqual(review, [])
         self.assertEqual(len(rejected), 1)
 
+    def test_manual_confirmation_is_preserved_without_static_candidate(self):
+        analysis = {"candidate_findings": []}
+        confirmed, review, rejected = _build_review(
+            analysis,
+            {"confirmed_findings": [{"rule_id": "DMA-001", "status": "confirmed", "notes": "Expert validated model role mixing."}]},
+        )
+        self.assertEqual([x["rule_id"] for x in confirmed], ["DMA-001"])
+        self.assertEqual(review, [])
+        self.assertEqual(rejected, [])
+
     def test_generate_standard_deliverables(self):
         result = {
             "order_id": "ORDER-TEST-001",
