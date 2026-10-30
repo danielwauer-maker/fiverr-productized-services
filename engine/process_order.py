@@ -45,10 +45,12 @@ def _build_review(analysis, order):
     confirmed = []
     review_queue = []
     rejected = []
+    seen = set()
     auto_confirm = order.get("auto_confirm_automatic", False)
 
     for candidate in analysis.get("candidate_findings", []):
         rule_id = candidate["rule_id"]
+        seen.add(rule_id)
         decision = decisions.get(rule_id)
         if decision:
             status = decision.get("status")
@@ -63,6 +65,17 @@ def _build_review(analysis, order):
             confirmed.append({**candidate, "status": "confirmed", "confirmation_source": "automatic_rule"})
         else:
             review_queue.append({**candidate, "status": "review_required"})
+
+    # Explicit expert decisions can cover manual/hybrid findings that static analysis
+    # cannot emit as candidates. Preserve those decisions for scoring and backwards
+    # compatibility with the validated demo order.
+    for rule_id, decision in decisions.items():
+        if rule_id in seen:
+            continue
+        if decision.get("status") == "confirmed":
+            confirmed.append(dict(decision))
+        else:
+            rejected.append(dict(decision))
 
     return confirmed, review_queue, rejected
 
