@@ -32,6 +32,19 @@
     "qa_run": 6,
     "qa_tests": "8/8 pass"
   },
+  "local_audit_center": {
+    "status": "merged_qa_pass",
+    "framework": "FastAPI",
+    "url": "http://127.0.0.1:8000",
+    "windows_launcher": "start_audit_center.bat",
+    "entrypoint": "run_audit_center.py",
+    "runtime_storage": "local_runtime/orders",
+    "project_input": ["PBIP ZIP upload", "local PBIP/PBIR/TMDL path"],
+    "features": ["order intake", "Health Score dashboard", "expert Confirm/Reject review", "severity-impact-effort review", "final delivery generation", "delivery downloads", "optimization offer preview", "local order deletion"],
+    "network_binding": "127.0.0.1 only",
+    "qa_run": 10,
+    "qa_status": "pass"
+  },
   "report": {
     "package_specific": true,
     "basic_target_pages": "3-4",
@@ -60,12 +73,13 @@
     "07": {"completion_percent": 100, "status": "done"},
     "08": {"completion_percent": 100, "status": "done"},
     "09": {"completion_percent": 100, "status": "automated_qa_pass"},
-    "10": {"completion_percent": 80, "status": "gig_requirements_gallery_identity_publish_steps_pending"}
+    "10": {"completion_percent": 80, "status": "gig_requirements_gallery_identity_publish_steps_pending"},
+    "15": {"completion_percent": 100, "status": "delivery_pipeline_and_local_operator_ui_done"}
   },
   "release_candidate": {
     "automated_qa": "pass",
-    "tests": "8/8 pass",
     "delivery_pipeline": "merged to main",
+    "local_audit_center": "merged to main after QA run 10 pass",
     "internal_order": "ORDER-STD-001 reproduces 78/100",
     "manual_checklist": "docs/MANUAL_LAUNCH_CHECKLIST.md"
   }
