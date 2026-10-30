@@ -1,0 +1,44 @@
+{
+  "basic": {
+    "name": "Power BI Quick Audit",
+    "price_usd": 80,
+    "delivery_days": 2,
+    "report_target_pages": "3-4",
+    "max_priority_findings": 5,
+    "include_category_scores": false,
+    "include_priority_matrix": false,
+    "include_blueprint": false,
+    "include_live_consultation_minutes": 0,
+    "offer_multiplier_low": 2.5,
+    "offer_multiplier_high": 5.0,
+    "positioning": "Focused diagnostic with the most important technical risks and next steps."
+  },
+  "standard": {
+    "name": "Power BI Health Audit",
+    "price_usd": 150,
+    "delivery_days": 3,
+    "report_target_pages": "8-12",
+    "max_priority_findings": 12,
+    "include_category_scores": true,
+    "include_priority_matrix": true,
+    "include_blueprint": false,
+    "include_live_consultation_minutes": 30,
+    "offer_multiplier_low": 3.0,
+    "offer_multiplier_high": 7.0,
+    "positioning": "Structured full health audit with prioritized findings and practical recommendations."
+  },
+  "premium": {
+    "name": "Complete Power BI Assessment",
+    "price_usd": 250,
+    "delivery_days": 4,
+    "report_target_pages": "12-18",
+    "max_priority_findings": 20,
+    "include_category_scores": true,
+    "include_priority_matrix": true,
+    "include_blueprint": true,
+    "include_live_consultation_minutes": 60,
+    "offer_multiplier_low": 3.5,
+    "offer_multiplier_high": 8.0,
+    "positioning": "Deep assessment with prioritized optimization blueprint, roadmap and consultation."
+  }
+}
