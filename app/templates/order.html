@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ order.order_id }} · Power BI Audit Center</title>
+  <link rel="stylesheet" href="/static/app.css">
+</head>
+<body>
+  <main class="shell">
+    <div class="topline"><a href="/">← New assessment</a><span>{{ order.order_id }}</span></div>
+    {% if message %}<div class="alert success">{{ message }}</div>{% endif %}
+
+    <section class="hero result-hero">
+      <div>
+        <div class="eyebrow">{{ package_labels.get(order.package, order.package) }}</div>
+        <h1>{{ result.project_name or order.project_name }}</h1>
+        <p>{{ result.customer_name or order.customer_name }} · {{ result.business_goal }}</p>
+      </div>
+      <div class="score-block">
+        <div class="score">{{ result.assessment.score if result.assessment else '—' }}</div>
+        <div>/100</div>
+        <strong>{{ result.assessment.band if result.assessment else '' }}</strong>
+      </div>
+    </section>
+
+    <section class="metrics">
+      <div><span>Tables</span><strong>{{ result.analysis.summary.tables if result.analysis else 0 }}</strong></div>
+      <div><span>Measures</span><strong>{{ result.analysis.summary.measures if result.analysis else 0 }}</strong></div>
+      <div><span>Relationships</span><strong>{{ result.analysis.summary.relationships if result.analysis else 0 }}</strong></div>
+      <div><span>Visuals</span><strong>{{ result.analysis.summary.visuals if result.analysis else 0 }}</strong></div>
+      <div><span>Confirmed</span><strong>{{ result.review.confirmed_count if result.review else 0 }}</strong></div>
+      <div><span>Review required</span><strong>{{ result.review.review_required_count if result.review else 0 }}</strong></div>
+    </section>
+
+    {% if review_items %}
+    <section class="card">
+      <div class="section-title">
+        <div><span>01</span><h2>Expert review</h2></div>
+        <p>Only these findings still need your decision. Automatic confirmed findings are already scored.</p>
+      </div>
+      <form action="/order/{{ order.order_id }}/review" method="post">
+        <div class="findings">
+        {% for f in review_items %}
+          <article class="finding">
+            <div class="finding-head">
+              <div><span class="pill">{{ f.rule_id }}</span><span class="mode">{{ f.detection_mode }}</span></div>
+              <strong>{{ f.title }}</strong>
+            </div>
+            <p class="review-note">{{ f.review_note }}</p>
+            <details><summary>Evidence</summary><pre>{{ f.evidence_hits | tojson(indent=2) }}</pre></details>
+            <div class="decision-row">
+              <label class="choice confirm"><input type="radio" name="decision__{{ f.rule_id }}" value="confirmed" required> Confirm finding</label>
+              <label class="choice reject"><input type="radio" name="decision__{{ f.rule_id }}" value="rejected" required> Reject</label>
+            </div>
+            <div class="tri-grid">
+              <label>Severity<select name="severity__{{ f.rule_id }}"><option value="low">Low</option><option value="medium" {% if f.default_severity == 'medium' %}selected{% endif %}>Medium</option><option value="high" {% if f.default_severity == 'high' %}selected{% endif %}>High</option><option value="critical" {% if f.default_severity == 'critical' %}selected{% endif %}>Critical</option></select></label>
+              <label>Business impact<select name="impact__{{ f.rule_id }}"><option value="low">Low</option><option value="medium" {% if f.default_business_impact == 'medium' %}selected{% endif %}>Medium</option><option value="high" {% if f.default_business_impact == 'high' %}selected{% endif %}>High</option></select></label>
+              <label>Effort<select name="effort__{{ f.rule_id }}"><option value="low">Low</option><option value="medium" {% if f.default_effort == 'medium' %}selected{% endif %}>Medium</option><option value="high" {% if f.default_effort == 'high' %}selected{% endif %}>High</option></select></label>
+            </div>
+            <label>Internal note<input name="notes__{{ f.rule_id }}" placeholder="Optional rationale or customer-specific context"></label>
+          </article>
+        {% endfor %}
+        </div>
+        <div class="actions"><button class="primary" type="submit">Save decisions & rerun audit</button></div>
+      </form>
+    </section>
+    {% else %}
+    <section class="card ready">
+      <div class="ready-icon">✓</div>
+      <div><h2>Assessment review complete</h2><p>No unresolved findings remain. The delivery package can be finalized.</p></div>
+      <form action="/order/{{ order.order_id }}/finalize" method="post"><button class="primary" type="submit">Generate final delivery</button></form>
+    </section>
+    {% endif %}
+
+    <section class="card">
+      <div class="section-title"><div><span>02</span><h2>Current findings</h2></div><p>Confirmed issues that currently affect the Health Score.</p></div>
+      {% if result.assessment and result.assessment.findings %}
+      <div class="confirmed-list">
+        {% for f in result.assessment.findings %}
+        <div class="confirmed-item"><div><span class="priority">{{ f.priority }}</span><strong>{{ f.title }}</strong></div><span>{{ f.severity }} · {{ f.effort }} effort · −{{ f.score_deduction }} pts</span></div>
+        {% endfor %}
+      </div>
+      {% else %}<p class="muted">No confirmed findings yet.</p>{% endif %}
+    </section>
+
+    <section class="card">
+      <div class="section-title"><div><span>03</span><h2>Delivery files</h2></div><p>Download only after review is complete. Draft reports are clearly marked.</p></div>
+      <div class="file-list">
+      {% for filename in files %}<a href="/order/{{ order.order_id }}/download/{{ filename }}">{{ filename }} <span>Download</span></a>{% endfor %}
+      </div>
+    </section>
+
+    {% if offer %}
+    <section class="card">
+      <div class="section-title"><div><span>04</span><h2>Optimization offer draft</h2></div><p>Internal draft — review scope and price before sending the Fiverr custom offer.</p></div>
+      <pre class="offer">{{ offer }}</pre>
+    </section>
+    {% endif %}
+
+    <section class="danger-zone">
+      <form action="/order/{{ order.order_id }}/delete" method="post" onsubmit="return confirm('Delete this local order and all generated files?');"><button class="danger" type="submit">Delete local order data</button></form>
+    </section>
+  </main>
+</body>
+</html>
