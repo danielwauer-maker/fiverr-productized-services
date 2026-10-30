@@ -50,7 +50,7 @@ Implementation is not included. The natural paid follow-up is a custom optimizat
 | 12 | Level 1 Optimization | NOT STARTED — requires marketplace data |
 | 13 | Power BI / DAX Troubleshooting Gig | DEFERRED until initial market signal |
 | 14 | Business Central Expert Assessment | DEFERRED until initial market signal |
-| 15 | Automation Expansion | **V1 DELIVERY AUTOMATION DONE** — further expansion deferred until real-order evidence |
+| 15 | Automation Expansion | **DONE 100% V1** — delivery pipeline + local Audit Center merged |
 | 16 | Scale toward Level 2 / Top Rated | DEFERRED until real orders |
 
 ## 5. Assessment Engine V1
@@ -79,10 +79,10 @@ Analyzer V1 supports PBIP/PBIR/TMDL static analysis. For PBIX, create a local PB
 Customer files remain local and must never be committed to GitHub.
 
 ## 7. Automated Delivery Pipeline V1
-Primary entrypoint:
+Primary CLI entrypoint:
 `python engine/run_delivery.py orders/ORDER-001.json --out deliveries/ORDER-001`
 
-Final mode:
+Final CLI mode:
 `python engine/run_delivery.py orders/ORDER-001.json --out deliveries/ORDER-001 --require-final`
 
 Generated outputs:
@@ -97,7 +97,33 @@ If review-required findings remain, the PDF is deliberately prefixed with `DRAFT
 
 The optimization offer is an internal draft only. Daniel must scope-check the proposed work and price before sending a Fiverr custom offer.
 
-## 8. Report System
+## 8. Local Power BI Audit Center V1
+A local FastAPI operator interface is now merged to `main`.
+
+Start on Windows by double-clicking:
+`start_audit_center.bat`
+
+The launcher creates a local virtual environment on first use, installs dependencies, starts the app and opens:
+`http://127.0.0.1:8000`
+
+The server binds only to localhost. The UI supports:
+- Fiverr Order ID, package, customer/project data, business goal, primary concern and known-problem intake;
+- PBIP ZIP upload or local PBIP/PBIR/TMDL project path;
+- automatic analyzer execution;
+- Health Score and model/report metrics;
+- expert review queue with Confirm / Reject;
+- optional severity, business impact and effort adjustment;
+- automatic rerun after review decisions;
+- final delivery generation;
+- direct download of report, Fiverr message and offer files;
+- optimization-offer preview;
+- deletion of local order/customer data.
+
+Runtime customer data is stored under `local_runtime/orders/` and ignored by Git. Browser ZIP extraction rejects path traversal. PBIX remains a manual local conversion to PBIP before analysis.
+
+Canonical guide: `docs/LOCAL_AUDIT_CENTER.md`.
+
+## 9. Report System
 Report generator: `engine/report_generator.py` using ReportLab.
 
 Package behavior:
@@ -112,7 +138,7 @@ Core report principles:
 4. Implementation remains commercially separate from the audit.
 5. Assessment boundaries are stated explicitly; static analysis does not pretend to replace runtime/business validation.
 
-## 9. Demo Truth
+## 10. Demo Truth
 Verified reproducible demo:
 - Before: **78/100 – Good**
 - After: **98/100 – Excellent**
@@ -120,8 +146,9 @@ Verified reproducible demo:
 
 This is a fictional/reproducible demo, never a fabricated customer result.
 
-## 10. Canonical Operations Files
+## 11. Canonical Operations Files
 - `docs/AUTOMATED_DELIVERY_PIPELINE.md`
+- `docs/LOCAL_AUDIT_CENTER.md`
 - `docs/REPORT_DESIGN_SYSTEM.md`
 - `ops/ORDER_OPERATIONS_RUNBOOK.md`
 - `ops/DELIVERY_TEMPLATES.md`
@@ -132,8 +159,11 @@ This is a fictional/reproducible demo, never a fabricated customer result.
 - `engine/process_order.py`
 - `engine/report_generator.py`
 - `engine/run_delivery.py`
+- `app/main.py`
+- `run_audit_center.py`
+- `start_audit_center.bat`
 
-## 11. Internal E2E / QA Evidence
+## 12. Internal E2E / QA Evidence
 Internal Standard order: **ORDER-STD-001**
 - intake: PASS
 - analyzer: PASS
@@ -141,16 +171,23 @@ Internal Standard order: **ORDER-STD-001**
 - candidate/confirmed guardrail: PASS
 - delivery generation: PASS
 
-Latest delivery-pipeline QA:
+Delivery-pipeline QA:
 - GitHub Actions run: **6**
 - automated tests: **8/8 PASS**
 - PDF generation smoke test: PASS
 - repeated-evidence scoring guardrail: PASS
 - expert-only finding preservation: PASS
 
-The delivery pipeline was merged to `main` after successful QA.
+Local Audit Center QA:
+- GitHub Actions run: **10 — PASS**
+- app import/dependency integration: PASS
+- PBIP discovery helper: PASS
+- order ID sanitization: PASS
+- ZIP path-traversal rejection: PASS
 
-## 12. Manual Launch Gate
+Both the delivery pipeline and the local operator UI are merged to `main`.
+
+## 13. Manual Launch Gate
 Remaining Fiverr actions:
 - finish Gig Requirements
 - finish Gallery
@@ -162,25 +199,29 @@ The intro video is not a blocker for launch and may be added later.
 
 After publication, record the final Gig URL/date here and move to Sprint 11.
 
-## 13. Real-Order Operator Workflow
-1. Download the customer project from Fiverr to a local working folder.
-2. If the customer provides PBIX, save/create a local PBIP working copy.
-3. Copy `ops/order_intake.example.json` and enter only order/customer/project information.
-4. Run `engine/run_delivery.py`.
-5. Review only entries in `review_required.json`; mark each as confirmed or rejected in the order JSON.
-6. Rerun with `--require-final`.
-7. Upload the generated final PDF and paste `fiverr_delivery_message.txt` into Fiverr.
-8. Review `optimization_offer.md`, adjust scope/price if needed, and send a custom implementation offer when appropriate.
-9. After implementation, offer Re-Validation.
+## 14. Real-Order Operator Workflow
+1. Download the customer PBIX/PBIP from Fiverr.
+2. If PBIX, save/create a local PBIP working copy in Power BI Desktop.
+3. Double-click `start_audit_center.bat`.
+4. Enter the order/customer/project information in the browser.
+5. Upload a ZIP containing one PBIP project or enter the local project path.
+6. Click **Analyze project**.
+7. Review only the items shown under **Expert review** and choose Confirm or Reject.
+8. Save decisions and rerun the audit from the UI.
+9. When the review queue is empty, click **Generate final delivery**.
+10. Download and upload the final PDF to Fiverr and use the generated delivery message.
+11. Review `optimization_offer.md`, adjust scope/price if needed and send a custom implementation offer when appropriate.
+12. After implementation, offer Re-Validation.
+13. Delete local order/customer data from the Audit Center when no longer needed.
 
-## 14. Planned Follow-up Gigs
+## 15. Planned Follow-up Gigs
 1. Power BI / DAX Troubleshooting
 2. Microsoft Dynamics 365 Business Central Expert Assessment
 3. Dashboard UX / Redesign Review
 4. Data Quality Assessment
 5. Re-Validation / Follow-up Assessment
 
-## 15. Change Control
+## 16. Change Control
 This file is the project source of truth. When product truth changes:
 1. update the relevant sprint/file;
 2. update `fiverr-current-state.json`;
