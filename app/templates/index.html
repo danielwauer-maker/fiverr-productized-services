@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Power BI Audit Center</title>
+  <link rel="stylesheet" href="/static/app.css">
+</head>
+<body>
+  <main class="shell">
+    <header class="hero">
+      <div>
+        <div class="eyebrow">LOCAL DELIVERY APP</div>
+        <h1>Power BI Audit Center</h1>
+        <p>Analyze a customer PBIP project, review only uncertain findings and generate the complete Fiverr delivery package locally.</p>
+      </div>
+      <div class="privacy-badge">Local only · Customer files stay on this computer</div>
+    </header>
+
+    {% if error %}<div class="alert error">{{ error }}</div>{% endif %}
+
+    <section class="card">
+      <div class="section-title">
+        <div><span>01</span><h2>New assessment</h2></div>
+        <p>Enter the Fiverr order details and select the Power BI project.</p>
+      </div>
+      <form action="/analyze" method="post" enctype="multipart/form-data" class="form-grid">
+        <label>Fiverr Order ID<input name="order_id" required placeholder="ORDER-001"></label>
+        <label>Package<select name="package">{% for key,label in package_labels.items() %}<option value="{{ key }}" {% if key == 'standard' %}selected{% endif %}>{{ label }}</option>{% endfor %}</select></label>
+        <label>Customer name<input name="customer_name" required placeholder="Contoso Retail GmbH"></label>
+        <label>Project name<input name="project_name" required placeholder="Executive Sales Reporting"></label>
+        <label class="wide">Business goal<textarea name="business_goal" required placeholder="Provide reliable executive sales KPIs and improve maintainability of the reporting model."></textarea></label>
+        <label class="wide">Primary concern<textarea name="primary_concern" required placeholder="Model complexity, DAX quality and report performance."></textarea></label>
+        <label class="wide">Known problems<textarea name="known_problems" placeholder="Optional customer notes, symptoms or known pain points."></textarea></label>
+
+        <div class="wide upload-panel">
+          <div>
+            <strong>Option A — Upload PBIP ZIP</strong>
+            <p>Zip the complete PBIP project folder and select it here.</p>
+            <input type="file" name="project_zip" accept=".zip">
+          </div>
+          <div class="or">OR</div>
+          <div>
+            <strong>Option B — Local project path</strong>
+            <p>Use an existing local .pbip file or project folder.</p>
+            <input name="local_project_path" placeholder="C:\PowerBI\CustomerProject\CustomerProject.pbip">
+          </div>
+        </div>
+
+        <div class="wide actions"><button class="primary" type="submit">Analyze project</button></div>
+      </form>
+    </section>
+
+    {% if recent %}
+    <section class="card">
+      <div class="section-title"><div><span>02</span><h2>Recent local orders</h2></div></div>
+      <div class="order-list">
+        {% for order in recent %}
+          <a href="/order/{{ order.order_id }}"><strong>{{ order.order_id }}</strong><span>{{ order.customer_name }} · {{ order.project_name }}</span></a>
+        {% endfor %}
+      </div>
+    </section>
+    {% endif %}
+  </main>
+</body>
+</html>
