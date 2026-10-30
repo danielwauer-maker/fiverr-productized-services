@@ -2,8 +2,8 @@
 """Operational wrapper for a Power BI Health Assessment order.
 
 Validates intake, runs Analyzer V1 and produces a conservative assessment.
-Automatic rules may be confirmed automatically when enabled. Hybrid/manual
-rules always remain in the expert review queue unless explicitly confirmed.
+Automatic rules may be confirmed automatically when explicitly enabled.
+Hybrid/manual rules always remain in the expert review queue unless confirmed.
 """
 from pathlib import Path
 import argparse, json, sys
@@ -45,7 +45,7 @@ def _build_review(analysis, order):
     confirmed = []
     review_queue = []
     rejected = []
-    auto_confirm = order.get("auto_confirm_automatic", True)
+    auto_confirm = order.get("auto_confirm_automatic", False)
 
     for candidate in analysis.get("candidate_findings", []):
         rule_id = candidate["rule_id"]
@@ -89,7 +89,7 @@ def process(order):
             "review_required": review_queue,
             "rejected": rejected
         },
-        "guardrail": "Automatic rules may be auto-confirmed. Hybrid/manual findings require explicit expert confirmation before they affect the customer score."
+        "guardrail": "Automatic rules may be auto-confirmed only when explicitly enabled. Hybrid/manual findings require explicit expert confirmation before they affect the customer score."
     }
 
 
