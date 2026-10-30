@@ -6,10 +6,13 @@
   "properties": {
     "order_id": {"type": "string", "minLength": 3},
     "package": {"enum": ["basic", "standard", "premium"]},
+    "customer_name": {"type": "string"},
+    "project_name": {"type": "string"},
     "project_path": {"type": "string", "minLength": 1},
     "business_goal": {"type": "string", "minLength": 10},
     "primary_concern": {"type": "string", "minLength": 3},
     "known_problems": {"type": "string"},
+    "auto_confirm_automatic": {"type": "boolean", "default": true},
     "scope_confirmed": {"type": "boolean", "const": true},
     "sensitive_data_confirmed": {"type": "boolean", "const": true},
     "confirmed_findings": {
