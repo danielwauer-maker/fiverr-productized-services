@@ -12,8 +12,8 @@ from basic_image_report import (
     _action_plan,
     _normalized_category_scores,
     _overall_score,
-    generate_basic_report_images,
 )
+from basic_image_report_v2 import generate_basic_report_images
 
 
 def sample_result(score=77):
@@ -100,7 +100,6 @@ class BasicImageReportTests(unittest.TestCase):
             pages2 = generate_basic_report_images(result, Path(td))
             self.assertEqual([p.name for p in pages], [p.name for p in pages2])
             self.assertTrue(all(p.exists() for p in pages2))
-            # At least one score-bearing image should change after a rerun.
             second_sizes = [p.stat().st_size for p in pages2]
             self.assertNotEqual(first_sizes[:2], second_sizes[:2])
 
