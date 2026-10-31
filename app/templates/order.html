@@ -85,7 +85,12 @@
     </section>
 
     <section class="card">
-      <div class="section-title"><div><span>03</span><h2>Delivery files</h2></div><p>Download only after review is complete. Draft reports are clearly marked.</p></div>
+      <div class="section-title"><div><span>03</span><h2>Delivery files</h2></div><p>Download individual files or the complete package as one ZIP.</p></div>
+      {% if files %}
+      <div class="actions" style="justify-content:flex-end; margin-bottom:16px;">
+        <a class="primary" href="/order/{{ order.order_id }}/download-all" style="text-decoration:none; display:inline-block;">Download all as {{ order.order_id }}.zip</a>
+      </div>
+      {% endif %}
       <div class="file-list">
       {% for filename in files %}<a href="/order/{{ order.order_id }}/download/{{ filename }}">{{ filename }} <span>Download</span></a>{% endfor %}
       </div>
