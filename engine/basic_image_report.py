@@ -119,9 +119,12 @@ def _brand(d,title,project,date_label,page=None):
     for i,hh in enumerate((30,45,65)):
         d.rounded_rectangle((M+i*24,70+65-hh,M+17+i*24,135),4,fill=YELLOW)
     _txt(d,(M+105,86),"Power BI Quick Audit",F["h3"],NAVY)
-    _txt(d,(M,155),title,F["h1"],NAVY)
-    _txt(d,(M,285),f"{project} · {date_label}",F["h3"],NAVY)
-    d.rectangle((M,335,M+72,341),fill=YELLOW)
+    multiline="\n" in title
+    title_font=_font(56,True) if multiline else F["h1"]
+    d.multiline_text((M,155),title,font=title_font,fill=NAVY,spacing=0)
+    project_y=292 if multiline else 285
+    _txt(d,(M,project_y),f"{project} · {date_label}",F["h3"],NAVY)
+    d.rectangle((M,project_y+50,M+72,project_y+56),fill=YELLOW)
     if page: _txt(d,(W-M,H-48),f"{page:02d}",F["small"],NAVY,anchor="rs")
 
 
