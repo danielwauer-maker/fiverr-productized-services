@@ -231,7 +231,13 @@ def download(order_id: str, filename: str):
     path = (delivery / safe_name).resolve()
     if delivery.resolve() not in path.parents or not path.exists() or not path.is_file():
         return RedirectResponse(f"/order/{order_id}", status_code=303)
-    return FileResponse(path, filename=safe_name)
+    # Audit outputs are regenerated in place after expert review. Prevent browsers from
+    # serving a stale pre-review PNG/PDF under the same filename.
+    return FileResponse(
+        path,
+        filename=safe_name,
+        headers={"Cache-Control": "no-store, no-cache, must-revalidate, max-age=0", "Pragma": "no-cache"},
+    )
 
 
 @app.post("/order/{order_id}/delete")
