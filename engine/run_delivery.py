@@ -45,10 +45,11 @@ def run(order_path: Path, out_dir: Path, require_final: bool = False):
 
     manifest = generate_deliverables(result, out_dir)
 
-    image_dir = out_dir / "basic_report_images"
-    image_pages = generate_basic_report_images(result, image_dir)
+    # Keep PNG pages directly in the delivery directory so the local Audit Center
+    # exposes them automatically in its existing Delivery files section.
+    image_pages = generate_basic_report_images(result, out_dir)
     if image_pages:
-        manifest["basic_report_images"] = [str(p.relative_to(out_dir)) for p in image_pages]
+        manifest["basic_report_images"] = [p.name for p in image_pages]
         (out_dir / "delivery_manifest.json").write_text(
             json.dumps(manifest, indent=2, ensure_ascii=False) + "\n", encoding="utf-8"
         )
