@@ -8,6 +8,7 @@ Outputs:
 - processed_assessment.json
 - review_required.json (only when expert review remains)
 - package-specific PDF report (DRAFT_ prefix until review is cleared)
+- five PNG Basic report pages for Basic orders
 - Fiverr delivery message
 - optimization offer draft
 - delivery manifest
@@ -19,6 +20,7 @@ HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 from process_order import process
 from report_generator import generate_deliverables
+from basic_image_report import generate_basic_report_images
 
 
 def run(order_path: Path, out_dir: Path, require_final: bool = False):
@@ -42,6 +44,15 @@ def run(order_path: Path, out_dir: Path, require_final: bool = False):
         review_path.unlink()
 
     manifest = generate_deliverables(result, out_dir)
+
+    image_dir = out_dir / "basic_report_images"
+    image_pages = generate_basic_report_images(result, image_dir)
+    if image_pages:
+        manifest["basic_report_images"] = [str(p.relative_to(out_dir)) for p in image_pages]
+        (out_dir / "delivery_manifest.json").write_text(
+            json.dumps(manifest, indent=2, ensure_ascii=False) + "\n", encoding="utf-8"
+        )
+
     if require_final and not manifest["final_ready"]:
         raise SystemExit(f"Final delivery blocked: {manifest['review_required']} finding(s) still require expert review. See {review_path}")
 
