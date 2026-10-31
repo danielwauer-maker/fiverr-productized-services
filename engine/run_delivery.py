@@ -20,7 +20,7 @@ HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 from process_order import process
 from report_generator import generate_deliverables
-from basic_image_report import generate_basic_report_images
+from basic_image_report_v2 import generate_basic_report_images
 
 
 def run(order_path: Path, out_dir: Path, require_final: bool = False):
