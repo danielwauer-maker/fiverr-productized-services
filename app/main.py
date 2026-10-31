@@ -76,6 +76,21 @@ def load_json(path: Path, default=None):
     return json.loads(path.read_text(encoding="utf-8"))
 
 
+def build_delivery_zip(order_id: str) -> Path:
+    """Create a fresh ZIP containing every generated delivery file for this order."""
+    clean_id = sanitize_order_id(order_id)
+    base, _, delivery = order_paths(clean_id)
+    if not delivery.exists():
+        raise FileNotFoundError("Delivery directory does not exist.")
+    zip_path = base / f"{clean_id}.zip"
+    zip_path.unlink(missing_ok=True)
+    with zipfile.ZipFile(zip_path, "w", compression=zipfile.ZIP_DEFLATED) as archive:
+        for path in sorted(delivery.rglob("*")):
+            if path.is_file():
+                archive.write(path, arcname=str(path.relative_to(delivery)))
+    return zip_path
+
+
 def order_view_context(order_id: str, message: str | None = None) -> dict:
     base, order_path, delivery = order_paths(order_id)
     order = load_json(order_path, {})
@@ -231,11 +246,23 @@ def download(order_id: str, filename: str):
     path = (delivery / safe_name).resolve()
     if delivery.resolve() not in path.parents or not path.exists() or not path.is_file():
         return RedirectResponse(f"/order/{order_id}", status_code=303)
-    # Audit outputs are regenerated in place after expert review. Prevent browsers from
-    # serving a stale pre-review PNG/PDF under the same filename.
     return FileResponse(
         path,
         filename=safe_name,
+        headers={"Cache-Control": "no-store, no-cache, must-revalidate, max-age=0", "Pragma": "no-cache"},
+    )
+
+
+@app.get("/order/{order_id}/download-all")
+def download_all(order_id: str):
+    try:
+        zip_path = build_delivery_zip(order_id)
+    except (ValueError, FileNotFoundError):
+        return RedirectResponse(f"/order/{order_id}", status_code=303)
+    return FileResponse(
+        zip_path,
+        filename=f"{sanitize_order_id(order_id)}.zip",
+        media_type="application/zip",
         headers={"Cache-Control": "no-store, no-cache, must-revalidate, max-age=0", "Pragma": "no-cache"},
     )
 
