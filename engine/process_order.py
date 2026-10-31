@@ -105,6 +105,8 @@ def process(order):
         "package": order["package"],
         "customer_name": order.get("customer_name", "Client"),
         "project_name": order.get("project_name") or analysis["summary"].get("project", "Power BI Project"),
+        "report_date": order.get("report_date", "October 2026"),
+        "dashboard_preview_path": order.get("dashboard_preview_path"),
         "business_goal": order["business_goal"],
         "primary_concern": order["primary_concern"],
         "known_problems": order.get("known_problems", ""),
